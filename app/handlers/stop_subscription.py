@@ -32,16 +32,32 @@ class SubscriptionProductInfo(StatesGroup):
 
 
 @route.callback_query(F.data.startswith("sub"))
-async def subscribe(callback_query: CallbackQuery):
+async def subscribe(callback_query: CallbackQuery, state: FSMContext):
 	article = callback_query.data.split('_')[1]
-	await callback_query.message.reply(f"Вы подписались на уведомления для товара с артикулом {article}.\n"
-									   f"Уведомления будут приходить каждые 5 минут.")
+	data = await state.get_data()
+	if data.get("article"):
+		await callback_query.answer(f"У вас активная подписка на артикул: {article}.\n"
+									f"Нажми: Остановить подписку\n", cache_time=10)
+		return
 
+	await state.set_state(SubscriptionProductInfo.product_subscription)
+	await state.update_data(article=article)
+
+	await callback_query.message.reply(f"Вы подписались на уведомления для товара с артикулом {article}.\n"
+								f"Уведомления будут приходить каждые 5 минут.\n")
 	while True:
-		await asyncio.sleep(10)
+		data = await state.get_data()
+		if data.get("sub_status") == "unsub":
+			await state.clear()
+			break
+
 		data_product = await get_data(art=article, user_id=callback_query.from_user.id)
 		product = create_product(product=data_product)
-
 		await callback_query.message.answer(get_answer(product))
+		await asyncio.sleep(5)
 
-# async def subscribe(callback_query: types.CallbackQuery):
+
+@route.message(SubscriptionProductInfo.product_subscription, F.text == "Остановить подписку")
+async def unsubscribe(message: Message, state: FSMContext):
+	await state.update_data(sub_status="unsub")
+	await message.reply("Вы успешно отписались от уведомлений.")

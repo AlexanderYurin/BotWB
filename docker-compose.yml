@@ -1,6 +1,6 @@
 version: '3'
 services:
-  postgres:
+  postgres_db:
     image: postgres:latest
     environment:
       POSTGRES_DB: bot
@@ -9,12 +9,14 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./postgres_data:/var/lib/postgresql/data
+      - ./database/postgres:/var/lib/postgresql/data
 
-  bot:
+  telegram_bot:
     build: .
     command: sh -c "python bot.py"
     volumes:
-      - .:/app
+      - .:/bot
     depends_on:
-      - postgres
+      - postgres_db
+
+
