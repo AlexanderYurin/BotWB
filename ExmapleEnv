@@ -1,0 +1,6 @@
+BOT_TOKEN=token
+DB_NAME=name
+DB_USER=user
+DB_PASSWORD=password
+DB_HOST=host
+DB_PORT=port
