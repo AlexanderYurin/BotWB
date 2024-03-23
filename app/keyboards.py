@@ -1,6 +1,10 @@
 from aiogram.types import KeyboardButton, ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
+HISTORY = "История"
+STOP_SUB = "Остановить подписку"
+GET_INFO = "Получить информацию по товару"
+
 
 class Keyboard:
 	def __init__(self, article=None):
@@ -8,9 +12,9 @@ class Keyboard:
 
 	@property
 	def main_keyboards(self) -> ReplyKeyboardMarkup:
-		button1 = KeyboardButton(text="Получить информацию по товару")
-		button2 = KeyboardButton(text="Остановить подписку")
-		button3 = KeyboardButton(text="История")
+		button1 = KeyboardButton(text=GET_INFO)
+		button2 = KeyboardButton(text=STOP_SUB)
+		button3 = KeyboardButton(text=HISTORY)
 
 		builder = ReplyKeyboardBuilder().add(button1).row(button2, button3)
 

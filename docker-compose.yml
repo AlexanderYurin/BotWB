@@ -1,7 +1,7 @@
 version: '3'
 services:
   postgres_db:
-    image: postgres:latest
+    image: postgres:15-alpine
     environment:
       POSTGRES_DB: bot
       POSTGRES_USER: root
@@ -9,13 +9,11 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./database/postgres:/var/lib/postgresql/data
+      - ./postgres:/var/lib/postgresql/data
 
   telegram_bot:
     build: .
     command: sh -c "python bot.py"
-    volumes:
-      - .:/bot
     depends_on:
       - postgres_db
 

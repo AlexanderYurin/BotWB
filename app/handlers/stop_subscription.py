@@ -6,20 +6,7 @@ from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import Message, CallbackQuery
 from aiogram import F
 
-from app.keyboards import Keyboard
-from app.parser.wb_parser import get_data
-from app.utils import get_answer
-from database.crud import create_product
-
-import asyncio
-
-from aiogram import Router
-from aiogram.fsm.context import FSMContext
-from aiogram.fsm.state import StatesGroup, State
-from aiogram.types import Message
-from aiogram import F
-
-from app.keyboards import Keyboard
+from app.keyboards import STOP_SUB
 from app.parser.wb_parser import get_data
 from app.utils import get_answer
 from database.crud import create_product
@@ -54,10 +41,10 @@ async def subscribe(callback_query: CallbackQuery, state: FSMContext):
 		data_product = await get_data(art=article, user_id=callback_query.from_user.id)
 		product = create_product(product=data_product)
 		await callback_query.message.answer(get_answer(product))
-		await asyncio.sleep(5)
+		await asyncio.sleep(5*60)
 
 
-@route.message(SubscriptionProductInfo.product_subscription, F.text == "Остановить подписку")
+@route.message(SubscriptionProductInfo.product_subscription, F.text == STOP_SUB)
 async def unsubscribe(message: Message, state: FSMContext):
 	await state.update_data(sub_status="unsub")
 	await message.reply("Вы успешно отписались от уведомлений.")

@@ -6,7 +6,7 @@ from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import Message
 from aiogram import F
 
-from app.keyboards import Keyboard
+from app.keyboards import Keyboard, GET_INFO
 from app.parser.wb_parser import get_data
 from app.utils import get_answer
 from database.crud import create_product
@@ -18,7 +18,7 @@ class ProductInfo(StatesGroup):
 	waiting_for_product = State()
 
 
-@route.message(F.text == "Получить информацию по товару")
+@route.message(F.text == GET_INFO)
 async def get_info_product(message: Message, state: FSMContext):
 	await state.set_state(ProductInfo.waiting_for_product)
 	await message.answer("Введите артикул товара:")
@@ -35,7 +35,3 @@ async def process_product_info(message: Message, state: FSMContext):
 	else:
 		await message.answer("Товар не найден. Введите другой артикул!")
 
-
-@route.message(F("Остановить уведомления"))
-async def cmd_stop_notifications(message: Message):
-	await message.answer("Уведомления остановлены.")
